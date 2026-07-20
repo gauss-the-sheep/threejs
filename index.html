@@ -1,102 +1,155 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Floor Plan Digital Twin</title>
-    <!-- Modern Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2" />
-    <script type="importmap">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Floor Plan Digital Twin</title>
+  <!-- Modern Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2" />
+  <script type="importmap">
       {
         "imports": {
           "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+          "tesseract.js": "./node_modules/tesseract.js/dist/tesseract.esm.min.js",
+          "pdfjs-dist": "./node_modules/pdfjs-dist/build/pdf.min.mjs"
         }
       }
     </script>
-  </head>
-  <body>
-    <canvas id="canvas"></canvas>
-    
-    <div id="panel" class="glass-panel">
-        <h2>Digital Twin</h2>
-        
-        <div class="input-group">
-            <label for="upload" class="file-label">
-                <span class="icon">📁</span> Choose Floor Plan
-            </label>
-            <input type="file" id="upload" accept="image/*" />
-        </div>
-        
-        <div class="input-group">
-            <label for="floorsOverride">Number of Floors (Max 20)</label>
-            <input type="number" id="floorsOverride" placeholder="Auto" min="1" max="20" />
-        </div>
+</head>
 
-        <div class="toggles-container">
-            <div class="toggle-group">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="togglePipes" checked>
-                    <span class="slider"></span>
-                </label>
-                <span class="toggle-label">Show Water Pipes</span>
-            </div>
-            
-            <div class="toggle-group">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="toggleEscape" checked>
-                    <span class="slider"></span>
-                </label>
-                <span class="toggle-label">Emergency Pathways</span>
-            </div>
-            <div class="toggle-group">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="toggleMultiFloor" checked>
-                    <span class="slider"></span>
-                </label>
-                <span class="toggle-label">Multi-Floor View</span>
-            </div>
-            <!-- Fire Zone UI -->
-            <div class="input-group">
-              <label for="roomIndex">Room Index</label>
-              <select id="roomIndex">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label for="floorIndex">Floor Index</label>
-              <select id="floorIndex">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
-            <button id="highlightBtn" class="primary-btn" style="margin-top:10px;">
-              <span class="icon">🔥</span> Highlight Zones
-            </button>
-        </div>
+<body>
+  <canvas id="canvas"></canvas>
 
-        <button id="walkthroughBtn" class="primary-btn" style="margin-top: 10px;">
-            <span class="icon">🚶</span> <span id="walkBtnText">Enter Walkthrough</span>
-        </button>
+  <div id="panel" class="glass-panel">
+    <h2>Digital Twin</h2>
 
-        <button id="clearBtn" class="secondary-btn">Clear Scene</button>
-        
-        <div id="status">Awaiting floor plan...</div>
+    <div class="input-group">
+      <label for="upload" class="file-label">
+        <span class="icon">📁</span> Choose Floor Plan
+      </label>
+      <input type="file" id="upload" accept="image/*,application/pdf" />
     </div>
-    
-    <div id="crosshair"></div>
-    <div id="instructions">WASD to move, Click & Drag to look</div>
 
-    <script type="module" src="app.js"></script>
-  </body>
+    <div class="input-group">
+      <label for="floorsOverride">Number of Floors (Max 20)</label>
+      <input type="number" id="floorsOverride" placeholder="Auto" min="1" max="20" />
+    </div>
+
+    <div class="toggles-container">
+      <div class="toggle-group">
+        <label class="toggle-switch">
+          <input type="checkbox" id="togglePipes" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Show Water Pipes</span>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggleElectrical" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Show Electrical Lines</span>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggleEscape" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Emergency Pathways</span>
+      </div>
+      <div class="toggle-group">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggleWindows" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Window Shell</span>
+      </div>
+      <div class="toggle-group">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggleMultiFloor" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Multi-Floor View</span>
+      </div>
+      <!-- Fire Zone UI -->
+      <div class="input-group">
+        <label for="blockIndex">Block Index</label>
+        <select id="blockIndex">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="roomIndex">Room Index</label>
+        <select id="roomIndex">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="floorIndex">Floor Index</label>
+        <select id="floorIndex">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <button id="highlightBtn" class="primary-btn" style="margin-top:10px;">
+        <span class="icon">🔥</span> Highlight Zones
+      </button>
+    </div>
+
+    <button id="walkthroughBtn" class="primary-btn" style="margin-top: 10px;">
+      <span class="icon">🚶</span> <span id="walkBtnText">Enter Walkthrough</span>
+    </button>
+
+    <button id="clearBtn" class="secondary-btn">Clear Scene</button>
+
+    <div id="status">Awaiting floor plan...</div>
+  </div>
+
+  <div id="crosshair"></div>
+  <div id="instructions">WASD to move, Click & Drag to look</div>
+
+  <!-- Analysed Floor Plan Image (top right) -->
+  <div id="imagePanel" class="image-panel">
+    <div class="image-panel-header">
+      <span>Analyzed Floor Plan</span>
+      <button id="imagePanelClose" class="image-panel-close" title="Hide">×</button>
+    </div>
+    <div class="image-panel-body">
+      <img id="planImage" alt="Analyzed floor plan" />
+    </div>
+    <div id="imagePanelMeta" class="image-panel-meta"></div>
+  </div>
+
+  <div id="tooltip" class="tooltip-panel" style="display: none; position: absolute; pointer-events: none; z-index: 200;"></div>
+
+  <div id="measurementsPanel" class="measurements-panel">
+    <div class="measurements-panel-header">
+      <span>Measurements & Building Data</span>
+      <button id="measurementsPanelClose" class="measurements-panel-close" title="Close">&times;</button>
+    </div>
+    <div class="measurements-panel-body">
+      <div id="measurementsContent"></div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js?v=2"></script>
+</body>
+
 </html>

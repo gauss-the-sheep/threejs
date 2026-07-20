@@ -8,9 +8,28 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@opencvjs/web": "^5.0.0-release.2",
+    "@techstark/opencv-js": "^5.0.0-release.1",
+    "@tensorflow/tfjs": "^4.22.0",
+    "browser-image-compression": "^2.0.2",
+    "earcut": "^3.2.3",
+    "image-js": "^1.7.0",
+    "onnxruntime-web": "^1.27.0",
+    "pdfjs-dist": "^6.1.200",
+    "tesseract.js": "^7.0.0",
     "three": "^0.185.1"
   },
   "devDependencies": {
     "http-server": "^14.1.1"
+  },
+  "allowScripts": {
+    "tesseract.js@7.0.0": true,
+    "onnxruntime-web@1.27.0": true,
+    "pdfjs-dist@6.1.200": true,
+    "@tensorflow/tfjs@4.22.0": true,
+    "browser-image-compression@2.0.2": true,
+    "@opencvjs/web@5.0.0-release.2": true,
+    "image-js@1.7.0": true,
+    "earcut@3.2.3": true
   }
 }
