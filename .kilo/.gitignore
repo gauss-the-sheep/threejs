@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.kilo/node_modules/
 
 # Logs
 npm-debug.log*
@@ -26,5 +27,5 @@ build/
 *.tmp
 *.cache
 
-# Antigravity/Kilo generated metadata (if you don't want to track it)
+# Antigravity/Kilo metadata
 agent-manager.json
